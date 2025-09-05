@@ -18,7 +18,7 @@ class AnalysisResult(BaseModel):
 
 async def analyze_text(text: str):
     try:
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash-preview-0520')
         
         # Summarization Logic
         summary_prompt = "Summarize the following text in 3 sentences:\n\n" + text
