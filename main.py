@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 import os
 import google.generativeai as genai
+import fitz # PyMuPDF
 
 app = FastAPI(
     title="Plagia AI Backend",
@@ -54,7 +55,16 @@ async def perform_analysis(file: UploadFile = File(...)):
     """
     try:
         content = await file.read()
-        text = content.decode("utf-8")
+        
+        # Check if file is a PDF
+        if file.filename.endswith('.pdf'):
+            doc = fitz.open(stream=content, filetype="pdf")
+            text = ""
+            for page in doc:
+                text += page.get_text()
+        else:
+            # Handle other file types as plain text
+            text = content.decode("utf-8")
         
         summary, ai_score = await analyze_text(text)
         
