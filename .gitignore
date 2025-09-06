@@ -1,0 +1,85 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment folder
+.venv/
+venv/
+env/
+ENV/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Jupyter Notebook checkpoints (if any)
+.ipynb_checkpoints/
+
+# PyCharm project files
+.idea/
+
+# VSCode project files
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+
+# Logs
+*.log
+
+# Local environment variables file
+.env
+
+# Sensitive data, API keys, secrets
+*.pem
+*.key
+
+# Data folders (depending on your setup)
+pan_corpus/
+data/
+corpus/
+datasets/
+
+# Models or large trained artifacts
+models/
+*.pkl
+*.joblib
+*.npz
+
+# Temporary files
+*.tmp
+*.temp
+
+# Android Studio generated files (if your project includes Android code)
+*.iml
+.gradle/
+local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+*.apk
+*.ap_
+externalNativeBuild/
+
+# Google Services (for Android)
+google-services.json
+firebase.json
+
+# Others to consider
+*.zip
+*.tar.gz
+*.rar
