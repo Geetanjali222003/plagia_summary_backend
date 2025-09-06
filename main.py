@@ -1,82 +1,65 @@
 from fastapi import FastAPI, File, UploadFile
-from pydantic import BaseModel
-import os
+from fastapi.responses import JSONResponse
 import google.generativeai as genai
 import fitz  # PyMuPDF
+import os
+
+# Configure Gemini API with your key (set this in Render Environment Variables)
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# Use Gemini Pro instead of Flash
+model = genai.GenerativeModel("gemini-1.5-pro-latest")
 
 app = FastAPI(
     title="Plagia AI Backend",
-    description="API for plagiarism, AI detection, and summarization.",
-    version="0.1.0"
+    version="0.1.0",
+    description="API for plagiarism, AI detection, and summarization."
 )
 
-# Configure Gemini API Key from Render environment variable
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-
-class AnalysisResult(BaseModel):
-    summary: str
-    ai_detection_score: float
-
-# ---- Core Logic ----
-async def analyze_text(text: str):
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-
-        # --- Summarization ---
-        summary_prompt = "Summarize the following text in 3 sentences:\n\n" + text
-        summary_response = await model.generate_content_async(summary_prompt)
-        summary_text = summary_response.text
-
-        # --- AI Detection Scoring ---
-        ai_detection_prompt = (
-            "Analyze the following text and return ONLY a number between 0 and 100 "
-            "indicating how likely it is AI-generated "
-            "(0 = definitely human, 100 = definitely AI):\n\n"
-            + text
-        )
-        ai_detection_response = await model.generate_content_async(ai_detection_prompt)
-
-        try:
-            # Convert model response to float
-            ai_score = float(ai_detection_response.text.strip())
-        except:
-            # fallback if Gemini gives something unexpected
-            ai_score = 50.0  
-
-        return summary_text, ai_score
-
-    except Exception as e:
-        print(f"Gemini API error: {e}")
-        return "Error in analysis", -1.0
-
-# ---- API Routes ----
 @app.get("/")
 def read_root():
-    return {"message": "Hello from the Gemini-powered AI & Summary Backend!"}
+    return {"message": "Plagia AI Backend is running with Gemini Pro 🚀"}
+
+# Extract text from uploaded PDF or text file
+def extract_text(file: UploadFile) -> str:
+    text = ""
+    if file.filename.endswith(".pdf"):
+        pdf_document = fitz.open(stream=file.file.read(), filetype="pdf")
+        for page in pdf_document:
+            text += page.get_text("text")
+    else:
+        text = file.file.read().decode("utf-8", errors="ignore")
+    return text.strip()
 
 @app.post("/api/analysis")
 async def perform_analysis(file: UploadFile = File(...)):
-    """
-    Performs AI detection (0–100) and summarization on an uploaded text or PDF file.
-    """
     try:
-        content = await file.read()
+        text = extract_text(file)
 
-        # Check if file is PDF
-        if file.filename.endswith(".pdf"):
-            doc = fitz.open(stream=content, filetype="pdf")
-            text = ""
-            for page in doc:
-                text += page.get_text()
-        else:
-            # Assume plain text for other files
-            text = content.decode("utf-8")
+        if not text:
+            return JSONResponse(content={"summary": "No text found", "ai_detection_score": -1}, status_code=200)
 
-        summary, ai_score = await analyze_text(text)
+        # Summarization with Gemini Pro
+        summary_prompt = f"Summarize the following text in 3-4 sentences:\n\n{text}"
+        summary_response = model.generate_content(summary_prompt)
+        summary = summary_response.text if summary_response and summary_response.text else "Error generating summary"
 
-        return AnalysisResult(
-            summary=summary,
-            ai_detection_score=ai_score
-        )
+        # AI Detection with Gemini Pro
+        detect_prompt = f"Analyze the following text and return a number between 0 (human-written) and 100 (completely AI-generated):\n\n{text}"
+        detect_response = model.generate_content(detect_prompt)
+        score = -1
+        if detect_response and detect_response.text:
+            try:
+                score = int("".join(filter(str.isdigit, detect_response.text)))
+                score = max(0, min(100, score))  # clamp 0–100
+            except:
+                score = -1
+
+        return JSONResponse(content={
+            "summary": summary,
+            "ai_detection_score": score
+        }, status_code=200)
+
     except Exception as e:
-        return {"error": str(e)}
+        print(f"Error in analysis: {e}")
+        return JSONResponse(content={"summary": "Error in analysis", "ai_detection_score": -1}, status_code=200)
