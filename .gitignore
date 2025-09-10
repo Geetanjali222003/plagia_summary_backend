@@ -3,55 +3,148 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environment folder
+# Virtual environment folders
 .venv/
 venv/
 env/
 ENV/
+env.bak/
+venv.bak/
 
 # Byte-compiled / optimized / DLL files
 *.pyc
 *.pyo
 *.pyd
+*.so
 
 # Distribution / packaging
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
 *.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Jupyter Notebook checkpoints (if any)
-.ipynb_checkpoints/
+# PyInstaller
+*.manifest
+*.spec
 
-# PyCharm project files
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py.cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django / Flask / DB stuff
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Poetry / Pipenv / pdm / uv / pixi
+# (lock files generally recommended to keep, but ignore if not needed)
+#Pipfile.lock
+#poetry.lock
+#poetry.toml
+#pdm.lock
+#pdm.toml
+.pdm-python
+.pdm-build/
+.uv.lock
+.pixi
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Spyder / Rope / PyCharm / VSCode
+.spyderproject
+.spyproject
+.ropeproject
 .idea/
-
-# VSCode project files
 .vscode/
 
-# macOS system files
-.DS_Store
+# mypy / Pyre / pytype / Ruff
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
 
-# Windows system files
+# Cython debug symbols
+cython_debug/
+
+# System files
+.DS_Store
 Thumbs.db
 ehthumbs.db
 
 # Logs
 *.log
 
-# Local environment variables file
+# Environment & secrets
 .env
-
-# Sensitive data, API keys, secrets
+.envrc
 *.pem
 *.key
 
-# Data folders (depending on your setup)
+# Data folders (custom for your project)
 pan_corpus/
 data/
 corpus/
 datasets/
-
-# Models or large trained artifacts
 models/
 *.pkl
 *.joblib
@@ -61,7 +154,7 @@ models/
 *.tmp
 *.temp
 
-# Android Studio generated files (if your project includes Android code)
+# Android Studio / Gradle
 *.iml
 .gradle/
 local.properties
@@ -74,12 +167,10 @@ local.properties
 *.apk
 *.ap_
 externalNativeBuild/
-
-# Google Services (for Android)
 google-services.json
 firebase.json
 
-# Others to consider
+# Archives
 *.zip
 *.tar.gz
 *.rar
